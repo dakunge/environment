@@ -1,0 +1,55 @@
+squid vpn 搭建（只针对http，端口25）
+
+centos
+setenforce 0
+ulimit -n 800000
+echo "* soft nofile 800000" >> /etc/security/limits.conf
+echo "* hard nofile 800000" >> /etc/security/limits.conf
+echo "alias net-pf-10 off" >> /etc/modprobe.d/dist.conf
+echo "alias ipv6 off" >> /etc/modprobe.d/dist.conf
+killall sendmail
+/etc/init.d/postfix stop
+chkconfig --level 2345 postfix off
+chkconfig --level 2345 sendmail off
+yum -y install squid wget
+wget http://github.itzmx.com/1265578519/PAC/master/squid/centos-squid.conf -O /etc/squid/squid.conf
+mkdir -p /var/cache/squid
+chmod -R 777 /var/cache/squid
+squid -z
+service squid restart
+chkconfig --level 2345 squid on
+iptables -t nat -F
+iptables -t nat -X
+iptables -t nat -P PREROUTING ACCEPT
+iptables -t nat -P POSTROUTING ACCEPT
+iptables -t nat -P OUTPUT ACCEPT
+iptables -t mangle -F
+iptables -t mangle -X
+iptables -t mangle -P PREROUTING ACCEPT
+iptables -t mangle -P INPUT ACCEPT
+iptables -t mangle -P FORWARD ACCEPT
+iptables -t mangle -P OUTPUT ACCEPT
+iptables -t mangle -P POSTROUTING ACCEPT
+iptables -F
+iptables -X
+iptables -P FORWARD ACCEPT
+iptables -P INPUT ACCEPT
+iptables -P OUTPUT ACCEPT
+iptables -t raw -F
+iptables -t raw -X
+iptables -t raw -P PREROUTING ACCEPT
+iptables -t raw -P OUTPUT ACCEPT
+service iptables save
+
+ubuntu
+apt-get -y install squid
+curl http://github.itzmx.com/1265578519/PAC/master/squid/ubuntu-squid.conf > /etc/squid3/squid.conf
+mkdir -p /var/cache/squid
+chmod -R 777 /var/cache/squid
+service squid3 stop
+squid3 -z
+service squid3 restart
+
+pac 文件放入七牛云，配置本地代理（mac-系统偏好-网络-高级-代理-指定pac（七牛的pac地址））
+
+远程服务器（Amazon was 需要配置安全组，这样是为了让本机可访问）
