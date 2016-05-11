@@ -2,7 +2,9 @@
 ## 补充
 
 1. 关于google的包无法下载的问题
+
 * github 地址 稍微修改一下路径，这样就可以编译出来这些二进制文件了
+
 * https://github.com/golang/tools.git
 
 > 二进制路径需要加入系统PATH中
@@ -47,4 +49,5 @@ let g:tagbar_type_go = {
 3. Tagbar 插件以来gotag，cmake
 
 * go get -u github.com/jstemmer/gotags
+
 * brew install cmake
